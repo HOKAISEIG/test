@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NoteController;
@@ -27,8 +28,16 @@ Route::group(['middleware' => 'prevent-back-history'],function(){
     })->middleware(['auth'])->name('dashboard');
     
     require __DIR__.'/auth.php';
-    
-    
-    
-    Route::resource('//notes', NoteController::class)->middleware(['auth']);
+
+    Route::get('/notes', function () {
+        return NoteController::class;
+    })->middleware(['auth'])->name('notes');
+
+    Route::post('comments',[App\Http\Controllers\CommentController::class, 'store']);
+
+    Route::get('edit-comment/{uuid}',[CommentController::class, 'edit' ]);
+
+
+    Route::resource('/notes', NoteController::class)->middleware(['auth']);
+
 });

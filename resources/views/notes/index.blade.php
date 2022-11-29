@@ -12,18 +12,30 @@
                     @forelse ($data['u'] as $note) 
                         <div class="my-6 p-6 bg-white border-b border-gray-200 shadow-sm sm:rounded-lg">
                             <h1 class="my-6 p-6 bg-white border-b border-gray-200 shadow-sm sm:rounded-lg font-bold text-5xl">Your blogs</h1>
-                            <h2 class="font-bold text-4xl">
-                                {{ $note->Title }}
+                            
+                            <h2 class="font-bold text-xl">
+                                <a href="{{ route('notes.show',$note) }}">{{ $note->title }}</a>
                             </h2>
 
                             <p class="mt-2">
-                                {{ $note->Text}}
+                                {{ Str::limit($note->text,300)}}
                             </p>
 
                             <span class="block mt-4 text-sm opacity-70">
                                 {{ $note->updated_at->diffForHumans(); }}
                             </span>
+                            
+                           
+                            <a href="{{ route('notes.edit', $note) }}" class="btn-link">Edit blog</a>
                             <br>
+                            <span>
+                                <br>
+                            </span>
+                            <form action="{{ route('notes.destroy', $note) }}" method="post">
+                                @method('delete')
+                                @csrf
+                                <button type="submit" class="btn-link" onclick="return confirm('Are you sure that you want to delete this blog?')">Delete this blog</button>
+                            </form>
                         </div>
                     @empty
                     <p class="my-6 p-6 bg-white border-b border-gray-200 shadow-sm sm:rounded-lg">You have no blogs</p>
@@ -33,24 +45,32 @@
                     {{ $data['u'] ->links() }}
 
                 </div>
+                
             </div>
             <div class="p(-6 bg-white border-b border-gray-200">
+                <h1 class="my-6 p-6 bg-white border-b border-gray-200 shadow-sm sm:rounded-lg font-bold text-5xl">Other blogs</h1>
                 @forelse ($data['o'] as $note) 
                     <div class="my-6 p-6 bg-white border-b border-gray-200 shadow-sm sm:rounded-lg">
-                        <h1 class="my-6 p-6 bg-white border-b border-gray-200 shadow-sm sm:rounded-lg font-bold text-5xl">Other blogs</h1>
-                        <h2 class="font-bold text-4xl">
-                            
-                            {{ $note->Title }}
+ 
+                        <h2 >
+                            <a href="{{ route('notes.show',$note) }}" class="font-bold text-xl ">{{ $note->title }}</a>
                         </h2>
 
                         <p class="mt-2">
-                            {{ $note->Text}}
+                            {{ Str::limit($note->text,300)}}
                         </p>
-
+                        
+                        <span class="block mt-4 text-sm opacity-70">
+                           Author-
+                            {{ $note->user->name }}
+                           
+                        </span>
                         <span class="block mt-4 text-sm opacity-70">
                             {{ $note->updated_at->diffForHumans(); }}
                         </span>
                         <br>
+                       
+
                     </div>
                 @empty
                 <p class="my-6 p-6 bg-white border-b border-gray-200 shadow-sm sm:rounded-lg">There are no blogs</p>

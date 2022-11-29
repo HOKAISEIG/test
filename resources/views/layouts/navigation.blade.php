@@ -12,8 +12,13 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link :href="route('//notes')" :active="request()->routeIs('//notes')">
-                        {{ __('notes') }}
+                    <x-nav-link :href="route('notes.index')" >
+                        {{ __('Blogs') }}
+                    </x-nav-link>
+                </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <x-nav-link :href="route('notes.create')" >
+                        {{ __('Create a blog') }}
                     </x-nav-link>
                 </div>
             </div>
