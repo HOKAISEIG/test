@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Note;
 use App\Models\Comment;
+use Facade\FlareClient\Http\Response;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -16,10 +17,6 @@ class CommentController extends Controller
 {
     public function store(Request $request )
     {
-        // $request->validate([
-        //     'c_body' => "required|max:120",
-        
-        // ]);
         $validator = Validator::make($request->all(),[
             'c_body' => 'required'
         ]);
@@ -29,8 +26,6 @@ class CommentController extends Controller
         else{
             $note = Note::where('uuid', $request->post_uuid)->first();
             if($note){ 
-               
-              
                 $com = new Comment([
                     'note_id'=> $note ->id,
                     'user_id' => Auth::user()->id,
@@ -56,11 +51,26 @@ class CommentController extends Controller
     {
 
         $comment = Comment::find($id);
+        
         return response()->json([
             'status'=>200,
             'comment'=>$comment,
         
         ]);
+    }
+    public function update(Request $request)
+    {
+        $comment = Comment::where('id',$request->comment_id)->first();
+        if($comment->user_id != Auth::id()) {
+            return abort(403);
+        }
+        $request->validate([
+            'comment'=>"required|max:200"
+        ]);
+        $comment->update([
+            'c_body'=>$request->comment
+        ]);
+        return redirect()->back();
     }
 
 }

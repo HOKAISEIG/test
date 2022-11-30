@@ -1,3 +1,4 @@
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -88,21 +89,38 @@
                 @endif
                 <div class="p(-6 bg-white border-b border-gray-200 text-4xl">
                     Write a comment-
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg" id = "postDiv">
                         <form action="{{ url('comments') }}" method="post">
                            <input type="hidden" name="post_uuid" value= "{{ $note->uuid}}">
                             @csrf
                            
-                            <x-textarea id="com_area"
+                            <x-textarea 
                             name="c_body" 
                             rows="3" 
                             field="text" 
                             placeholer="Start commenting here..." 
                             class="w-full mt-6"
-                            :value="@old('text')"></x-textarea>
+                            ></x-textarea>
                             
-                            <x-button class="mt-6" id="post-btn">Post</x-button>
+                            <x-button class="mt-6" id="postBtn">Post</x-button>
                         </form>
+                    </div>
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg" id="updateDiv">
+                        <form action="{{ url('update-comment')}}" method="post">
+                            @method('put')
+                            @csrf
+                            <input hidden name="comment_id" id="comment_id">
+                            <x-textarea id="com_area"
+                            name="comment"
+                            field="comment" 
+                            rows="3" 
+                            field="text"  
+                            class="w-full mt-6"
+                            ></x-textarea>
+                            
+                            <x-button  id="updateBtn" >Update</x-button>
+                        </form>
+                        <x-button  id="cancelBtn">Cancel</x-button>
                     </div>
                 </div>
             </div>
@@ -110,27 +128,44 @@
     </div>
    
     <script>
+        $('#updateDiv').hide();
+    
         $(document).ready(function(){
+            var id;
            $(document).on('click','.editBtn',function(){
-                
-                var id = $(this).val();
-                
-              
+                id = $(this).val();
                 $.ajax({
                     type:"GET",
                     url: "/edit-comment/"+id,
                     success: function(response) {
-                       
                         $('#com_area').val(response.comment.c_body);
-                        
+                        $('#comment_id').val(response.comment.id)
+                        $('#updateDiv').show();
+                        $('#postDiv').hide();
                     }
-
                 });
-                
-               
             });
+            $(document).on('click','#cancelBtn',function(){
+                $('#com_area').val("");
+                $('#updateDiv').hide();
+                $('#postDiv').show();
+            });
+            // $(document).on('click','#updateBtn',function(){
+            //     $.ajax({
+            //         type:"POST",
+            //         url: "/update-comment",
+            //         data: {
+            //             'comment_id' : id
+            //         },
+            //         success: function(response) {
+            //             $('#com_area').val();
+            //             $('#updateDiv').hide();
+            //             $('#postDiv').show();
+            //             alert(response.message);
+            //         }
+            //     });
+            // });
          });
-
     </script>
 
 </x-app-layout>

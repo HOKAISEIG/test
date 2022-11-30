@@ -35,8 +35,8 @@ Route::group(['middleware' => 'prevent-back-history'],function(){
 
     Route::post('comments',[App\Http\Controllers\CommentController::class, 'store']);
 
-    Route::get('edit-comment/{uuid}',[CommentController::class, 'edit' ]);
-
+    Route::get('edit-comment/{id}',[CommentController::class, 'edit' ]);
+    Route::put('update-comment',[CommentController::class, 'update']);
 
     Route::resource('/notes', NoteController::class)->middleware(['auth']);
 
