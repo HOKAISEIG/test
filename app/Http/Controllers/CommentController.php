@@ -11,7 +11,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
-
+use Psy\Readline\Hoa\Console;
 
 class CommentController extends Controller
 {
@@ -49,7 +49,7 @@ class CommentController extends Controller
     }
     public function edit($id)
     {
-
+       
         $comment = Comment::find($id);
         
         return response()->json([
@@ -71,6 +71,19 @@ class CommentController extends Controller
             'c_body'=>$request->comment
         ]);
         return redirect()->back();
+    }
+    public function destroy(Request $request)
+    {
+        
+        $comment = Comment::where("id",$request->comment_id)->first();
+        if($comment->user_id != Auth::id()) {
+            return abort(403);
+        }
+        $comment->delete();
+        return response()->json([
+            'status'=>200,
+            'message'=>'Delete sucessful!'
+        ]);
     }
 
 }

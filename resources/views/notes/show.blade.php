@@ -49,7 +49,7 @@
             </div>
            
                 @forelse ($note->comments as $comment) 
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-10  ">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-10 comcont">
                     {{ $comment->c_body }}
                     Commented on: {{ $comment->created_at->format('Y-m-d') }}
                     @if($comment->user)
@@ -62,9 +62,9 @@
                             </button>
                             
                             </button>
-                            <a href="{{ route('login') }}" class="btn">
+                            <button type="button" value="{{ $comment->id }}"class="btn deleteBtn">
                                 delete
-                            </a>
+                            </button>
                         </div>
                     @endif
 
@@ -150,21 +150,34 @@
                 $('#updateDiv').hide();
                 $('#postDiv').show();
             });
-            // $(document).on('click','#updateBtn',function(){
-            //     $.ajax({
-            //         type:"POST",
-            //         url: "/update-comment",
-            //         data: {
-            //             'comment_id' : id
-            //         },
-            //         success: function(response) {
-            //             $('#com_area').val();
-            //             $('#updateDiv').hide();
-            //             $('#postDiv').show();
-            //             alert(response.message);
-            //         }
-            //     });
-            // });
+            $(document).on('click','.deleteBtn',function(){
+               if(confirm('Confirm?'))
+               {
+                    var thisClicked = $(this);
+                    var comment_id = thisClicked.val();
+                  
+                    $.ajax({
+                        type:"POST",
+                        url: "{{ route('deleteComment') }}",
+                        data: {
+                            '_token':'{{ csrf_token() }}',
+                        'comment_id' : comment_id
+                    },
+                    success: function(response) {
+                        if(response.status == 200){
+
+                            thisClicked.closest('.comcont').remove();
+                            alert(response.message);
+                        
+                        }
+                        else{
+                            alert(response.message)
+                        }
+                        
+                    } 
+                });
+               }
+            });
          });
     </script>
 

@@ -4,6 +4,7 @@ use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NoteController;
+use App\Models\Comment;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,7 +38,7 @@ Route::group(['middleware' => 'prevent-back-history'],function(){
 
     Route::get('edit-comment/{id}',[CommentController::class, 'edit' ]);
     Route::put('update-comment',[CommentController::class, 'update']);
-
     Route::resource('/notes', NoteController::class)->middleware(['auth']);
 
 });
+Route::post('delete-comment', [App\Http\Controllers\CommentController::class, 'destroy'])->name('deleteComment');
