@@ -21,4 +21,12 @@ class Note extends Model
     public function comments() {
         return $this->hasMany(Comment::class);
     }
+    public function likedUsers() {
+        return $this->belongsToMany(User::class, 'note_user')->withPivot('value')->wherePivot('value',0);
+    }
+    public function dislikedUsers(){
+        return $this->belongsToMany(User::class,'note_user')->withPivot('value')->wherePivot('value',1);
+    }
+   
+    
 }

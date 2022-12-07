@@ -69,6 +69,13 @@
                             {{ $note->updated_at->diffForHumans(); }}
                         </span>
                         <br>
+                        @can('delete_post')
+                            <form action="{{ route('destroyPost',$note)  }}" method = "POST">
+                                @csrf
+                                @method("delete")
+                                <button class="btn deleteBtn">Delete</button>
+                            </form>
+                        @endcan
                        
 
                     </div>

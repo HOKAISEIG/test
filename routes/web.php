@@ -1,10 +1,13 @@
 <?php
 
-use App\Http\Controllers\CommentController;
+use App\Http\Controllers\AdminController;
+use App\Models\like;
+use App\Models\Comment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\NoteController;
-use App\Models\Comment;
+use App\Http\Controllers\CommentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,5 +43,9 @@ Route::group(['middleware' => 'prevent-back-history'],function(){
     Route::put('update-comment',[CommentController::class, 'update']);
     Route::resource('/notes', NoteController::class)->middleware(['auth']);
 
+    Route::post('likePost/{id}',[LikeController::class,'likePost'])->name('likePost')->middleware(['auth']);
+    Route::post('dislikePost/{id}',[LikeController::class,'dislikePost'])->name('dislikePost')->middleware(['auth']);
+    Route::post('destroyCom/{id}',[AdminController::class, 'destroyComment'])->name('destroyCom');
+    Route::delete('destroyPost/{note}', [AdminController::class, 'destroyPost'])->name("destroyPost");
 });
 Route::post('delete-comment', [App\Http\Controllers\CommentController::class, 'destroy'])->name('deleteComment');

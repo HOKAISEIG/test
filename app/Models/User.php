@@ -41,8 +41,17 @@ class User extends Authenticatable
     public function notes() {
         return $this->hasMany(Note::class);
     }
-
+   
+    public function likedNotes(){
+        return $this->belongsToMany(Note::class, 'note_user')->withTimestamps()->withPivot('value')->wherePivot('value',0);
+    }
+    public function dislikedNotes() {
+        return $this->belongsToMany(Note::class, 'note_user')->withTimestamps()->withPivot('value')->wherePivot('value',1);
+    }
     
 
-    
+
+
+
+
 }

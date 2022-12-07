@@ -34,10 +34,26 @@
                             </span>
                             <br>
                         </div>
-                  
+                    <!--like unlike section!-->
+                    <div>    
+                      
+                        <a href="#" onclick="document.getElementById('like-form-{{ $note->id }}').submit();">
+                            <i  class="{{Auth::user()->likedNotes()->where(['note_id'=>$note->id, 'value'=>'0'])->count() > 0 ? "fa fa-thumbs-up" : "fa fa-thumbs-o-up"}}" id= "likeIcon" style="font-size:48px"  ></i>
+                        </a>
+                        {{ $note->likedUsers->count() }}
+                        <form action="{{ route('likePost',$note->id)  }}"method="POST" style="display: none" id="like-form-{{ $note->id }}">@csrf</form>
 
-                 
-
+                        <a href="#" onclick="document.getElementById('dislike-form-{{ $note->id }}').submit();">
+                            <i  class="{{Auth::user()->dislikedNotes()->where(['note_id'=>$note->id, 'value'=>'1'])->count() > 0 ? "fa fa-thumbs-down" : "fa fa-thumbs-o-down"}}" id= "dislikeIcon" style="font-size:48px"  ></i>
+                        </a>
+                        {{ $note->dislikedUsers->count() }}
+                        <form action="{{ route('dislikePost',$note->id) }}" method="POST" style="display: none" id="dislike-form-{{ $note->id }}">@csrf</form>
+                        <span></span>
+                        
+                       
+                       
+                   
+                    </div>  
                 </div>
             </div>
     </div>
@@ -49,32 +65,48 @@
             </div>
            
                 @forelse ($note->comments as $comment) 
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-10 comcont">
-                    {{ $comment->c_body }}
-                    Commented on: {{ $comment->created_at->format('Y-m-d') }}
-                    @if($comment->user)
-                        {{ $comment->user->name }}
-                    @endif
-                    @if(Auth::id() == $comment->user_id)
-                        <div>
-                            <button type="button" value="{{ $comment->id }}"class="btn editBtn">
-                                edit
-                            </button>
-                            
-                            </button>
-                            <button type="button" value="{{ $comment->id }}"class="btn deleteBtn">
-                                delete
-                            </button>
-                        </div>
-                    @endif
-
-                    <span><br></span>
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-10 comcont border-b border-gray-200">
+                        {{ $comment->c_body }}
+                        <br>
+                        Commented on: {{ $comment->created_at->format('Y-m-d') }}
+                        <br>
                     
-                </div>
-                @empty
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-10   ">
-                    No comments yet
-                </div>
+                        @if($note->user_id == $comment->user_id)
+                            By->Author
+                        @else
+                            By->{{ $comment->user->name }}
+                        @endif
+                        @if(Auth::id()==$comment->user_id)
+                            <div>
+                                <button type="button" value="{{ $comment->id }}"class="btn editBtn">
+                                    edit
+                                </button>
+                                
+                                </button>
+                                <button type="button" value="{{ $comment->id }}"class="btn deleteBtn">
+                                    delete
+                                </button>
+                            </div>
+                    
+                        @endif
+                        @can('delete_comment')
+                            
+                            <form action="{{ route('destroyCom', $comment->id)}}" method="POST" >
+                                @csrf
+                                @method('POST')
+                                <button class="btn deleteBtn">DELETE</button>
+                            </form>
+                            
+                        @endcan
+
+                        <br>
+                        <span>--------------------------------------</span>
+                       
+                    </div>
+                    @empty
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-10   ">
+                        No comments yet
+                    </div>
                 @endforelse
                     
             
@@ -128,10 +160,15 @@
     </div>
    
     <script>
-        $('#updateDiv').hide();
-    
+       
+        
         $(document).ready(function(){
+
+            $('#updateDiv').hide();
             var id;
+
+           
+
            $(document).on('click','.editBtn',function(){
                 id = $(this).val();
                 $.ajax({
@@ -145,11 +182,13 @@
                     }
                 });
             });
+
             $(document).on('click','#cancelBtn',function(){
                 $('#com_area').val("");
                 $('#updateDiv').hide();
                 $('#postDiv').show();
             });
+
             $(document).on('click','.deleteBtn',function(){
                if(confirm('Confirm?'))
                {

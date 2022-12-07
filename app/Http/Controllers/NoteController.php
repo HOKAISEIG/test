@@ -71,7 +71,7 @@ class NoteController extends Controller
      */
     public function show(Note $note)
     {
-        
+    
         
         return view('notes.show')->with('note',$note);
 
@@ -133,10 +133,6 @@ class NoteController extends Controller
             return abort(403);
           }
         $note->delete();
-        $userId = Auth::id();
-        $usernotes = Note::where('user_id',$userId)->latest('updated_at')->paginate(1,['*'], 'user');
-        $othernotes= Note::where('user_id','!=',$userId)->latest('updated_at')->paginate(10 ,['*'], 'other');
-
         return redirect()->route('notes.index');
     }
 }
